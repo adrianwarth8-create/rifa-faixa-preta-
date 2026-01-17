@@ -107,7 +107,7 @@
 </footer>
 
 <script>
-const SCRIPT_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhcGliQr3EU88m7APA_jlep6wlNBrm5xqml1rwADXKcRptld0YRDy8PO864zqCBbWG8pKx_lXB-f-m2TDHROShCeU4p4yXDwYw9iVIFyaBOim0HFDBO9BkQqwAVboSGjIQiKj8y5BWr09rMY5PVkyI1o0c7KnZKODHSYVqzoWFVFL_eJxsrdO4UOIyuvRfVeGNr7ctKYG-5yUfuQ0mQ0aiySHRO6zHTZIyCx6iVutNj3ToZBJKQDsj88mIcbebwoxVvqbY0l_6N2vkzpuTC5w2C7c1FDxYpszeDmNdY&lib=M-nKPMHBQUZjCT-SbCCtL3UX-3ZsdzgN6";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyN0airWnZSYmIN4ajtxO93u_sqZKU5BU6mmDM5GK4A9aegBtNiSejA3_iOI-_bT6PUg/exec";
 
 let selecionado = null;
 let numerosComprados = [];
@@ -117,6 +117,8 @@ async function carregarNumerosComprados() {
   try {
     const res = await fetch(SCRIPT_URL);
     numerosComprados = await res.json();
+    // remove duplicados, caso haja
+    numerosComprados = [...new Set(numerosComprados)];
   } catch (e) {
     console.error("Erro ao carregar números comprados:", e);
   }
