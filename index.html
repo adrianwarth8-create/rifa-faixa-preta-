@@ -161,10 +161,7 @@ function gerarReciboPDF(nome,whats,numeros){
   // Cabeçalho
   doc.setFontSize(18);
   doc.setTextColor(255, 215, 0);
-  doc.text("Recibo Rifa – Faixa Preta 🥋", 105, 20, { align: "center" });
-
-  // Logo (opcional)
-  doc.addImage("https://i.imgur.com/xK4XyYq.png", "PNG", 10, 30, 40, 40);
+  doc.text("Recibo Rifa – Faixa Preta", 105, 20, { align: "center" });
 
   // Dados do comprador em dourado
   doc.setFontSize(12);
@@ -190,8 +187,8 @@ function gerarReciboPDF(nome,whats,numeros){
   doc.setFontSize(12);
   doc.setFont("helvetica","normal");
   doc.setTextColor(255,255,255);
-  doc.text("Obrigado por ajudar a tornar possível a conquista da faixa preta! 🥋", 105, startY + Math.ceil(numeros.length/10)*10 + 20, {align:"center"});
-  doc.text("Seu apoio faz toda a diferença! 🎉", 105, startY + Math.ceil(numeros.length/10)*10 + 28, {align:"center"});
+  doc.text("Obrigado por ajudar a tornar possível a conquista da faixa preta!", 105, startY + Math.ceil(numeros.length/10)*10 + 20, {align:"center"});
+  doc.text("Seu apoio faz toda a diferença!", 105, startY + Math.ceil(numeros.length/10)*10 + 28, {align:"center"});
 
   doc.save(`Recibo_Rifa_${nome.replace(/\s+/g,'_')}.pdf`);
 }
