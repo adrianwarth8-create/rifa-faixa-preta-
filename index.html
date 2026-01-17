@@ -1,89 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rifa Solidária – Faixa Preta</title>
+  <meta charset="UTF-8">
+  <title>Rifa Faixa Preta - Adrian Silva Warth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #111, #333);
-      color: #fff;
-    }
-
-    header {
+      font-family: Arial, sans-serif;
+      background: #0b1c2d;
+      color: white;
       text-align: center;
-      padding: 30px 15px;
+      margin: 0;
+      padding: 20px;
     }
+    h1 { color: #e63946; }
+    h2 { color: #1d9bf0; }
 
-    header h1 {
-      margin-bottom: 10px;
-    }
-
-    .container {
-      max-width: 1000px;
+    .box {
+      background: #14213d;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
       margin: auto;
-      padding: 20px;
     }
 
-    .card {
-      background: #1c1c1c;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
     }
 
-    h2 {
-      margin-top: 0;
+    button {
+      background: #e63946;
+      color: white;
+      cursor: pointer;
     }
 
-    /* Números */
+    button:hover {
+      background: #ff4d5a;
+    }
+
     .numeros {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
       margin-top: 15px;
     }
 
     .numero {
-      padding: 12px;
-      background: #2ecc71;
-      text-align: center;
-      border-radius: 8px;
-      font-weight: bold;
+      background: #1d3557;
+      padding: 10px;
+      border-radius: 5px;
       cursor: pointer;
-      color: #000;
     }
 
-    .numero:hover {
-      background: #27ae60;
+    .numero.selecionado {
+      background: #2ecc71;
+      color: black;
     }
 
-    /* WhatsApp */
-    .whatsapp-fixo {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #25d366;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 50px;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      z-index: 999;
-    }
-
-    .whatsapp-fixo:hover {
-      background: #1ebe5d;
+    .contador {
+      font-size: 20px;
+      margin: 15px 0;
     }
 
     footer {
-      text-align: center;
-      padding: 20px;
+      margin-top: 20px;
       font-size: 14px;
       opacity: 0.8;
     }
@@ -92,87 +78,17 @@
 
 <body>
 
-<header>
-  <h1>🥋 Rifa Solidária – Faixa Preta</h1>
-  <p>Valor por número: <strong>R$ 5,00</strong></p>
-</header>
+<h1>RIFA – FAIXA PRETA 🥋</h1>
+<h2>Adrian Silva Warth</h2>
 
-<div class="container">
+<div class="contador" id="contador"></div>
 
-  <!-- CONTADOR -->
-  <section class="card">
-    <h2>⏳ Contagem Regressiva</h2>
-    <div id="contador" style="font-size: 22px; font-weight: bold;"></div>
-  </section>
+<div class="box">
+  <p><strong>🎯 Objetivo:</strong> Arrecadar R$ 4.000 para troca de faixa preta</p>
+  <p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
+  <p><strong>🏆 Prêmios:</strong><br>
+    🥇 1º Ovelha carneada<br>
+    🥈 2º Cesta Cacau Show
+  </p>
 
-  <!-- REGRAS -->
-  <section class="card">
-    <h2>📜 Regras da Rifa</h2>
-    <ul>
-      <li>🎯 Prêmio: Faixa Preta de Taekwondo</li>
-      <li>💰 Valor: R$ 5,00 por número</li>
-      <li>📲 Pagamento via Pix</li>
-      <li>📅 Sorteio ao vivo após venda de todos os números</li>
-      <li>🔒 Organização transparente</li>
-    </ul>
-  </section>
-
-  <!-- NÚMEROS -->
-  <section class="card">
-    <h2>🎟️ Escolha seu número</h2>
-    <div class="numeros" id="numeros"></div>
-  </section>
-
-</div>
-
-<footer>
-  © 2026 – Rifa Solidária | Boa sorte 🍀
-</footer>
-
-<!-- BOTÃO WHATSAPP -->
-<a href="https://wa.me/5555999999999?text=Olá,%20quero%20participar%20da%20rifa%20da%20faixa%20preta."
-   class="whatsapp-fixo" target="_blank">
-   💬 WhatsApp
-</a>
-
-<script>
-  /* CONTADOR */
-  const dataSorteio = new Date("2026-02-15T10:00:00").getTime();
-
-  setInterval(() => {
-    const agora = new Date().getTime();
-    const distancia = dataSorteio - agora;
-
-    if (distancia < 0) {
-      document.getElementById("contador").innerHTML =
-        "🎉 Sorteio acontecendo agora!";
-      return;
-    }
-
-    const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
-    const horas = Math.floor((distancia / (1000 * 60 * 60)) % 24);
-    const minutos = Math.floor((distancia / (1000 * 60)) % 60);
-    const segundos = Math.floor((distancia / 1000) % 60);
-
-    document.getElementById("contador").innerHTML =
-      `${dias}d ${horas}h ${minutos}m ${segundos}s`;
-  }, 1000);
-
-  /* NÚMEROS DA RIFA */
-  const numerosDiv = document.getElementById("numeros");
-  for (let i = 1; i <= 100; i++) {
-    const num = String(i).padStart(3, "0");
-    const div = document.createElement("div");
-    div.className = "numero";
-    div.innerText = num;
-    div.onclick = () => {
-      window.open(
-        `https://wa.me/5555999999999?text=Olá,%20quero%20o%20número%20${num}%20da%20rifa.`
-      );
-    };
-    numerosDiv.appendChild(div);
-  }
-</script>
-
-</body>
-</html>
+  <p><strong>📅 Sorteio:</strong> 25 de agos
