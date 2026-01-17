@@ -1,191 +1,207 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Rifa Faixa Preta – Adrian Silva Warth</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Rifa Faixa Preta – Adrian Warth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #0b1c2d;
-  color: #ffffff;
-  text-align: center;
-  padding: 20px;
-  margin: 0;
-}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #0a1a2a, #001f3f);
+      color: #fff;
+      text-align: center;
+    }
 
-h1 { color: #e63946; }
-h2 { margin-top: 25px; }
+    h1 { margin-top: 20px; }
+    h2 { margin-bottom: 10px; }
 
-.info {
-  max-width: 800px;
-  margin: auto;
-  background: #1d3557;
-  padding: 15px;
-  border-radius: 10px;
-}
+    .contador {
+      font-size: 18px;
+      margin: 10px 0 20px;
+      color: #ffcc00;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
-  gap: 8px;
-  max-width: 1000px;
-  margin: 20px auto;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 10px;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
 
-.numero {
-  padding: 12px 0;
-  background: #457b9d;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
+    .numero {
+      background: #123;
+      padding: 15px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
 
-.numero:hover {
-  background: #1d3557;
-}
+    .numero:hover {
+      background: #1e90ff;
+    }
 
-.vendido {
-  background: #e63946 !important;
-  cursor: not-allowed;
-}
+    .vendido {
+      background: #8b0000 !important;
+      cursor: not-allowed;
+    }
 
-form {
-  max-width: 400px;
-  margin: 30px auto;
-  background: #1d3557;
-  padding: 20px;
-  border-radius: 10px;
-}
+    .form {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      max-width: 400px;
+      margin: 30px auto;
+      border-radius: 10px;
+    }
 
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: none;
-}
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
 
-button {
-  background: #e63946;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
+    button {
+      background: #c62828;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-button:hover {
-  background: #ff4d5a;
-}
+    button:hover {
+      background: #ff0000;
+    }
 
-footer {
-  margin-top: 40px;
-  font-size: 14px;
-  opacity: 0.85;
-}
-</style>
+    footer {
+      margin: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>🎟️ RIFA – FAIXA PRETA TAEKWONDO 🥋</h1>
-<h2>Adrian Silva Warth</h2>
+<h1>🎟️ Rifa Solidária</h1>
+<h2>Faixa Preta – Taekwondo</h2>
 
-<div class="info">
-  <p>💰 Valor por número: <strong>R$ 5,00</strong></p>
-  <p>🎯 Objetivo: Troca de faixa para a preta</p>
-  <p>📅 Sorteio: <strong>25 de agosto às 10h</strong> (Instagram)</p>
-  <p>💳 Pix: <strong>adrianwarth8@gmail.com</strong></p>
-  <p>📲 WhatsApp: <strong>55 99992-9198</strong></p>
+<div class="contador" id="contador"></div>
+
+<p>Valor: <strong>R$ 5,00</strong> por número</p>
+
+<div class="grid" id="grid"></div>
+
+<div class="form">
+  <h3>Reservar número</h3>
+  <input type="text" id="nome" placeholder="Nome completo" />
+  <input type="text" id="whats" placeholder="WhatsApp (DDD + número)" />
+  <input type="text" id="numeroSelecionado" placeholder="Número escolhido" readonly />
+  <button onclick="reservar()">Reservar número</button>
 </div>
 
-<h2>⏳ Contagem regressiva</h2>
-<p id="contador"></p>
-
-<h2>📌 Números disponíveis</h2>
-<div class="grid" id="gridNumeros"></div>
-
-<form id="formReserva">
-  <h2>📲 Reservar número</h2>
-  <input type="text" id="nome" placeholder="Seu nome" required>
-  <input type="text" id="whatsapp" placeholder="WhatsApp" required>
-  <input type="text" id="numero" placeholder="Número escolhido" readonly required>
-  <button type="submit">Reservar número</button>
-</form>
-
 <footer>
-Boa sorte 🍀 | Rifa solidária – Taekwondo
+  Sorteio: <strong>25 de agosto às 10h</strong> – Instagram<br>
+  Dúvidas: WhatsApp 55999929198
 </footer>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycby5nKtfENKcVxHGIn0oRpK5Ebwq2ZsgmHZoOF0ss305pOVAEhJofFaVs9voKOZaplUGVQ/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI26GdLBO17EX5jB2q1faSmuq3u1NePst2lzvfAykMHEViyd8VpnwTovUtlantk6vtLw/exec";
+  const TOTAL = 1000;
+  let vendidos = [];
 
-const grid = document.getElementById("gridNumeros");
-const inputNumero = document.getElementById("numero");
+  function formatar(n) {
+    return n.toString().padStart(3, "0");
+  }
 
-// CRIA GRID DE NÚMEROS
-function criarGrid(vendidos) {
-  grid.innerHTML = "";
-  for (let i = 1; i <= 1000; i++) {
-    const n = i.toString().padStart(3, "0");
-    const div = document.createElement("div");
-    div.className = "numero";
-    div.textContent = n;
+  function criarGrid() {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
 
-    if (vendidos.includes(n)) {
-      div.classList.add("vendido");
-    } else {
-      div.onclick = () => inputNumero.value = n;
+    for (let i = 1; i <= TOTAL; i++) {
+      const num = formatar(i);
+      const div = document.createElement("div");
+      div.className = "numero";
+      div.innerText = num;
+
+      if (vendidos.includes(num)) {
+        div.classList.add("vendido");
+      } else {
+        div.onclick = () => {
+          document.getElementById("numeroSelecionado").value = num;
+        };
+      }
+
+      grid.appendChild(div);
+    }
+  }
+
+  function carregarVendidos() {
+    fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(data => {
+        vendidos = data;
+        criarGrid();
+      })
+      .catch(() => alert("Erro ao carregar números"));
+  }
+
+  function reservar() {
+    const nome = document.getElementById("nome").value.trim();
+    const whats = document.getElementById("whats").value.trim();
+    const numero = document.getElementById("numeroSelecionado").value;
+
+    if (!nome || !whats || !numero) {
+      alert("Preencha todos os campos");
+      return;
     }
 
-    grid.appendChild(div);
-  }
-}
-
-// BUSCA NÚMEROS PAGOS
-fetch(API)
-  .then(r => r.json())
-  .then(d => criarGrid(d))
-  .catch(() => criarGrid([]));
-
-// RESERVA
-document.getElementById("formReserva").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const nome = document.getElementById("nome").value;
-  const whatsapp = document.getElementById("whatsapp").value;
-  const numero = inputNumero.value;
-
-  if (!numero) {
-    alert("Escolha um número!");
-    return;
-  }
-
-  fetch(`${API}?nome=${encodeURIComponent(nome)}&whatsapp=${encodeURIComponent(whatsapp)}&numero=${numero}`)
-    .then(() => {
-      alert("Número reservado! Você será direcionado ao WhatsApp.");
-
-      window.location.href =
-        "https://wa.me/55999929198?text=" +
-        encodeURIComponent(
-          `Olá! Reservei o número ${numero} na rifa da faixa preta. Já vou enviar o Pix.`
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ nome, whats, numero })
+    })
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.status === "ok") {
+        window.open(
+          `https://wa.me/55${whats}?text=Olá! Reservei o número ${numero} da rifa da Faixa Preta.`,
+          "_blank"
         );
+        alert("Número reservado com sucesso!");
+        carregarVendidos();
+      } else {
+        alert(resp.mensagem || "Erro ao reservar");
+      }
     })
     .catch(() => alert("Erro ao reservar. Tente novamente."));
-});
+  }
 
-// CONTADOR REGRESSIVO
-const dataSorteio = new Date("2026-08-25T10:00:00").getTime();
-setInterval(() => {
-  const agora = new Date().getTime();
-  const diff = dataSorteio - agora;
+  function contador() {
+    const fim = new Date("2026-08-25T10:00:00");
+    const agora = new Date();
+    const diff = fim - agora;
 
-  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    if (diff <= 0) {
+      document.getElementById("contador").innerText = "Sorteio em andamento!";
+      return;
+    }
 
-  document.getElementById("contador").innerHTML =
-    `${dias} dias e ${horas} horas restantes`;
-}, 1000);
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+
+    document.getElementById("contador").innerText =
+      `⏳ Faltam ${d} dias, ${h}h ${m}min para o sorteio`;
+  }
+
+  carregarVendidos();
+  contador();
+  setInterval(contador, 60000);
 </script>
 
 </body>
