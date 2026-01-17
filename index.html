@@ -7,16 +7,16 @@
 
 <style>
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
   background: #0b1c2d;
   color: #ffffff;
   text-align: center;
   padding: 20px;
+  margin: 0;
 }
 
 h1 { color: #e63946; }
-h2 { margin-top: 30px; }
+h2 { margin-top: 25px; }
 
 .info {
   max-width: 800px;
@@ -28,7 +28,7 @@ h2 { margin-top: 30px; }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
   gap: 8px;
   max-width: 1000px;
   margin: 20px auto;
@@ -81,7 +81,7 @@ button:hover {
 footer {
   margin-top: 40px;
   font-size: 14px;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 </style>
 </head>
@@ -96,16 +96,16 @@ footer {
   <p>🎯 Objetivo: Troca de faixa para a preta</p>
   <p>📅 Sorteio: <strong>25 de agosto às 10h</strong> (Instagram)</p>
   <p>💳 Pix: <strong>adrianwarth8@gmail.com</strong></p>
-  <p>📲 Envie o comprovante: <strong>55 99992-9198</strong></p>
+  <p>📲 WhatsApp: <strong>55 99992-9198</strong></p>
 </div>
 
 <h2>⏳ Contagem regressiva</h2>
 <p id="contador"></p>
 
-<h2>📌 Números da Rifa</h2>
+<h2>📌 Números disponíveis</h2>
 <div class="grid" id="gridNumeros"></div>
 
-<form onsubmit="reservarNumero(event)">
+<form id="formReserva">
   <h2>📲 Reservar número</h2>
   <input type="text" id="nome" placeholder="Seu nome" required>
   <input type="text" id="whatsapp" placeholder="WhatsApp" required>
@@ -123,13 +123,14 @@ const API = "https://script.google.com/macros/s/AKfycby5nKtfENKcVxHGIn0oRpK5Ebwq
 const grid = document.getElementById("gridNumeros");
 const inputNumero = document.getElementById("numero");
 
-// CRIA OS NÚMEROS
+// CRIA GRID DE NÚMEROS
 function criarGrid(vendidos) {
+  grid.innerHTML = "";
   for (let i = 1; i <= 1000; i++) {
     const n = i.toString().padStart(3, "0");
     const div = document.createElement("div");
     div.className = "numero";
-    div.innerText = n;
+    div.textContent = n;
 
     if (vendidos.includes(n)) {
       div.classList.add("vendido");
@@ -143,28 +144,35 @@ function criarGrid(vendidos) {
 
 // BUSCA NÚMEROS PAGOS
 fetch(API)
-  .then(res => res.json())
-  .then(data => criarGrid(data))
+  .then(r => r.json())
+  .then(d => criarGrid(d))
   .catch(() => criarGrid([]));
 
-// ENVIA RESERVA
-function reservarNumero(e) {
+// RESERVA
+document.getElementById("formReserva").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const nome = document.getElementById("nome").value;
   const whatsapp = document.getElementById("whatsapp").value;
-  const numero = document.getElementById("numero").value;
+  const numero = inputNumero.value;
 
   if (!numero) {
-    alert("Escolha um número primeiro!");
+    alert("Escolha um número!");
     return;
   }
 
-  fetch(`${API}?nome=${encodeURIComponent(nome)}&whatsapp=${encodeURIComponent(whatsapp)}&numero=${numero}`);
+  fetch(`${API}?nome=${encodeURIComponent(nome)}&whatsapp=${encodeURIComponent(whatsapp)}&numero=${numero}`)
+    .then(() => {
+      alert("Número reservado! Você será direcionado ao WhatsApp.");
 
-  alert("Número reservado! Envie o Pix para confirmar.");
-  window.location.href = "https://wa.me/55999929198";
-}
+      window.location.href =
+        "https://wa.me/55999929198?text=" +
+        encodeURIComponent(
+          `Olá! Reservei o número ${numero} na rifa da faixa preta. Já vou enviar o Pix.`
+        );
+    })
+    .catch(() => alert("Erro ao reservar. Tente novamente."));
+});
 
 // CONTADOR REGRESSIVO
 const dataSorteio = new Date("2026-08-25T10:00:00").getTime();
