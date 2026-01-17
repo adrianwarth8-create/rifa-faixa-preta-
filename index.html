@@ -1,82 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Rifa Faixa Preta – Adrian Silva Warth</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Rifa Faixa Preta – Adrian Silva Warth</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b1c2d;
-      color: #ffffff;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0b1c2d;
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
 
-    h1 { color: #e63946; }
-    h2 { color: #1d9bf0; }
+h1 { color: #e63946; }
+h2 { color: #1d9bf0; }
 
-    .container {
-      max-width: 520px;
-      margin: auto;
-      background: #14213d;
-      padding: 20px;
-      border-radius: 12px;
-    }
+.container {
+  max-width: 520px;
+  margin: auto;
+  background: #14213d;
+  padding: 20px;
+  border-radius: 12px;
+}
 
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
 
-    button {
-      background: #e63946;
-      color: #fff;
-      cursor: pointer;
-      font-weight: bold;
-    }
+button {
+  background: #e63946;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    button:hover {
-      background: #ff4d5a;
-    }
+button:hover { background: #ff4d5a; }
 
-    .numeros {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-      margin: 15px 0;
-    }
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin: 15px 0;
+}
 
-    .numero {
-      background: #1d3557;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+.numero {
+  background: #1d3557;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-    .numero.selecionado {
-      background: #2ecc71;
-      color: #000;
-      font-weight: bold;
-    }
+.numero.selecionado {
+  background: #2ecc71;
+  color: #000;
+  font-weight: bold;
+}
 
-    .contador {
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
+.numero.ocupado {
+  background: #e63946;
+  cursor: not-allowed;
+}
 
-    footer {
-      margin-top: 20px;
-      font-size: 14px;
-      opacity: 0.85;
-    }
-  </style>
+.contador {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+</style>
 </head>
 
 <body>
@@ -88,103 +91,119 @@
 
 <div class="container">
 
-  <p><strong>🎯 Objetivo:</strong> arrecadar fundos para a troca de faixa preta</p>
-  <p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
+<p><strong>🎯 Objetivo:</strong> arrecadar fundos para a troca de faixa preta</p>
+<p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
 
-  <p><strong>🏆 Prêmios:</strong><br>
-    🥇 Ovelha carneada<br>
-    🥈 Cesta de chocolates Cacau Show
-  </p>
+<p><strong>🏆 Prêmios:</strong><br>
+🥇 Ovelha carneada<br>
+🥈 Cesta Cacau Show
+</p>
 
-  <p><strong>📅 Sorteio:</strong> 25 de agosto às 10h<br>
-     <strong>📍 Transmissão:</strong> Instagram
-  </p>
+<p><strong>📅 Sorteio:</strong> 25 de agosto às 10h<br>
+<strong>📍 Transmissão:</strong> Instagram
+</p>
 
-  <p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
+<p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
 
-  <hr>
+<hr>
 
-  <h3>Escolha seu número</h3>
-  <div class="numeros" id="numeros"></div>
+<h3>Escolha seu número</h3>
+<div class="numeros" id="numeros"></div>
 
-  <input type="text" id="nome" placeholder="Seu nome completo">
-  <input type="text" id="whats" placeholder="WhatsApp com DDD">
+<input type="text" id="nome" placeholder="Seu nome completo">
+<input type="text" id="whats" placeholder="WhatsApp com DDD">
 
-  <button onclick="reservar()">Reservar número</button>
+<button onclick="reservar()">Reservar número</button>
 </div>
 
 <footer>
-  Após o pagamento via Pix, o número será confirmado.<br>
-  WhatsApp: 55 9999-29198
+Após o pagamento via Pix, o número será confirmado.<br>
+WhatsApp: 55 9999-29198
 </footer>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhFe3Pzx7iMH0Cnymjqg2yK-VaNr1tDu5FW-XlYQU7tFAxQDsxbSFV_qCWkRG4STdfAA/exec";
-  let selecionado = null;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzf34zIFwp_hLZ_v25zEoXAD63BQGOJDRMRfsmxkVrP0FR9r0jCz1UkmuYMy7JMNRQLEw/exec";
 
-  // Gera números (ajuste até 1000 depois)
-  const numerosDiv = document.getElementById("numeros");
-  for (let i = 1; i <= 100; i++) {
-    const div = document.createElement("div");
-    div.className = "numero";
-    div.textContent = i.toString().padStart(3, "0");
-    div.onclick = () => selecionar(div);
-    numerosDiv.appendChild(div);
+let selecionado = null;
+let numerosOcupados = [];
+
+// GERAR NÚMEROS (altere para 1000 depois)
+const numerosDiv = document.getElementById("numeros");
+for (let i = 1; i <= 100; i++) {
+  const div = document.createElement("div");
+  div.className = "numero";
+  div.textContent = i.toString().padStart(3, "0");
+  div.onclick = () => selecionar(div);
+  numerosDiv.appendChild(div);
+}
+
+// BUSCAR NÚMEROS OCUPADOS
+fetch(SCRIPT_URL)
+  .then(res => res.json())
+  .then(lista => {
+    numerosOcupados = lista;
+    document.querySelectorAll(".numero").forEach(div => {
+      if (numerosOcupados.includes(div.textContent)) {
+        div.classList.add("ocupado");
+        div.onclick = null;
+      }
+    });
+  });
+
+// SELECIONAR
+function selecionar(el) {
+  if (el.classList.contains("ocupado")) return;
+  document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
+  el.classList.add("selecionado");
+  selecionado = el.textContent;
+}
+
+// RESERVAR
+function reservar() {
+  const nome = document.getElementById("nome").value.trim();
+  const whats = document.getElementById("whats").value.trim();
+
+  if (!nome || !whats || !selecionado) {
+    alert("Preencha todos os campos e escolha um número.");
+    return;
   }
 
-  function selecionar(el) {
-    document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
-    el.classList.add("selecionado");
-    selecionado = el.textContent;
-  }
+  const dados = new URLSearchParams();
+  dados.append("nome", nome);
+  dados.append("whats", whats);
+  dados.append("numero", selecionado);
 
-  function reservar() {
-    const nome = document.getElementById("nome").value.trim();
-    const whats = document.getElementById("whats").value.trim();
-
-    if (!nome || !whats || !selecionado) {
-      alert("Preencha todos os campos e escolha um número.");
-      return;
-    }
-
-    const dados = new URLSearchParams();
-    dados.append("nome", nome);
-    dados.append("whats", whats);
-    dados.append("numero", selecionado);
-
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: dados
-    })
+  fetch(SCRIPT_URL, { method: "POST", body: dados })
     .then(() => {
-      alert("Número reservado! Envie o Pix para confirmar.");
+      alert("Número reservado com sucesso! Envie o Pix para confirmar.");
       window.open(
         `https://wa.me/55${whats.replace(/\D/g,"")}?text=Olá! Reservei o número ${selecionado} na rifa da faixa preta. Já vou enviar o Pix.`,
         "_blank"
       );
+      location.reload();
     })
-    .catch(() => alert("Erro ao enviar. Tente novamente."));
+    .catch(() => alert("Erro ao reservar. Tente novamente."));
+}
+
+// CONTADOR
+const dataSorteio = new Date("2026-08-25T10:00:00").getTime();
+setInterval(() => {
+  const agora = new Date().getTime();
+  const diff = dataSorteio - agora;
+
+  if (diff <= 0) {
+    document.getElementById("contador").innerText = "⏰ Sorteio hoje!";
+    return;
   }
 
-  // Contador regressivo
-  const dataSorteio = new Date("2026-08-25T10:00:00").getTime();
-  setInterval(() => {
-    const agora = new Date().getTime();
-    const diff = dataSorteio - agora;
+  const d = Math.floor(diff / (1000*60*60*24));
+  const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const m = Math.floor((diff%(1000*60*60))/(1000*60));
+  const s = Math.floor((diff%(1000*60))/1000);
 
-    if (diff <= 0) {
-      document.getElementById("contador").innerText = "⏰ Sorteio hoje!";
-      return;
-    }
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-    document.getElementById("contador").innerText =
-      `⏳ ${d}d ${h}h ${m}m ${s}s`;
-  }, 1000);
+  document.getElementById("contador").innerText =
+    `⏳ ${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
 </script>
 
 </body>
