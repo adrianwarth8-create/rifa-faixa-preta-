@@ -93,23 +93,23 @@
 
   <hr>
 
-  <h3>Escolha seu número</h3>
+  <h3>Escolha seus números</h3>
   <div class="numeros" id="numeros"></div>
 
   <input type="text" id="nome" placeholder="Seu nome completo">
   <input type="text" id="whats" placeholder="WhatsApp com DDD">
-  <button onclick="reservar()">Reservar número</button>
+  <button onclick="reservar()">Reservar números</button>
 </div>
 
 <footer>
-  Após o Pix, o número será confirmado.<br>
+  Após o Pix, os números serão confirmados.<br>
   Contato: WhatsApp 55999929198
 </footer>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyN0airWnZSYmIN4ajtxO93u_sqZKU5BU6mmDM5GK4A9aegBtNiSejA3_iOI-_bT6PUg/exec";
 
-let selecionado = null;
+let selecionados = []; // múltiplos números selecionados
 let numerosComprados = [];
 
 // Carrega números já comprados do Google Sheets
@@ -117,8 +117,7 @@ async function carregarNumerosComprados() {
   try {
     const res = await fetch(SCRIPT_URL);
     numerosComprados = await res.json();
-    // remove duplicados, caso haja
-    numerosComprados = [...new Set(numerosComprados)];
+    numerosComprados = [...new Set(numerosComprados)]; // remove duplicados
   } catch (e) {
     console.error("Erro ao carregar números comprados:", e);
   }
@@ -142,42 +141,56 @@ function gerarNumeros() {
   }
 }
 
+// Seleção múltipla
 function selecionarNumero(el) {
-  document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
-  el.classList.add("selecionado");
-  selecionado = parseInt(el.innerText, 10);
+  const numero = parseInt(el.innerText, 10);
+  if (el.classList.contains("selecionado")) {
+    el.classList.remove("selecionado");
+    selecionados = selecionados.filter(n => n !== numero);
+  } else {
+    el.classList.add("selecionado");
+    selecionados.push(numero);
+  }
 }
 
-// Função de reserva
+// Reserva múltiplos números
 async function reservar() {
   const nome = document.getElementById("nome").value.trim();
   const whats = document.getElementById("whats").value.trim();
 
-  if (!selecionado || !nome || !whats) {
-    alert("Preencha todos os campos e escolha um número.");
+  if (selecionados.length === 0 || !nome || !whats) {
+    alert("Preencha todos os campos e escolha pelo menos um número.");
     return;
   }
 
-  if (numerosComprados.includes(selecionado)) {
-    alert("Número já reservado. Escolha outro.");
-    return;
+  // verifica se algum número já está reservado
+  for (let n of selecionados) {
+    if (numerosComprados.includes(n)) {
+      alert(`O número ${n} já está reservado. Remova da seleção.`);
+      return;
+    }
   }
-
-  const data = new URLSearchParams();
-  data.append("nome", nome);
-  data.append("whats", whats);
-  data.append("numero", selecionado);
 
   try {
-    await fetch(SCRIPT_URL, { method: "POST", body: data });
-    alert("Número reservado com sucesso! Envie o Pix para confirmar.");
-    window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=Olá! Reservei o número ${selecionado} na rifa da faixa preta. Já vou enviar o Pix.`);
+    for (let n of selecionados) {
+      const data = new URLSearchParams();
+      data.append("nome", nome);
+      data.append("whats", whats);
+      data.append("numero", n);
 
-    // Atualiza visual do número reservado
-    const el = [...document.querySelectorAll(".numero")].find(n => parseInt(n.innerText,10) === selecionado);
-    if (el) el.classList.add("ocupado");
+      await fetch(SCRIPT_URL, { method: "POST", body: data });
 
-    numerosComprados.push(selecionado);
+      // atualiza visual
+      const el = [...document.querySelectorAll(".numero")].find(x => parseInt(x.innerText,10) === n);
+      if (el) el.classList.add("ocupado");
+      numerosComprados.push(n);
+    }
+
+    // envia WhatsApp com todos os números
+    window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=Olá! Reservei os números ${selecionados.join(", ")} na rifa da faixa preta. Já vou enviar o Pix.`);
+
+    alert("Números reservados com sucesso! Envie o Pix para confirmar.");
+    selecionados = []; // limpa seleção
 
   } catch (e) {
     alert("Erro ao enviar. Tente novamente.");
