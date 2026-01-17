@@ -2,27 +2,28 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Rifa Faixa Preta - Adrian Silva Warth</title>
+  <title>Rifa Faixa Preta – Adrian Silva Warth</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #0b1c2d;
-      color: white;
+      color: #ffffff;
       text-align: center;
-      margin: 0;
       padding: 20px;
     }
+
     h1 { color: #e63946; }
     h2 { color: #1d9bf0; }
 
-    .box {
+    .container {
+      max-width: 520px;
+      margin: auto;
       background: #14213d;
       padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: auto;
+      border-radius: 12px;
     }
 
     input, button {
@@ -36,8 +37,9 @@
 
     button {
       background: #e63946;
-      color: white;
+      color: #fff;
       cursor: pointer;
+      font-weight: bold;
     }
 
     button:hover {
@@ -48,30 +50,31 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 6px;
-      margin-top: 15px;
+      margin: 15px 0;
     }
 
     .numero {
       background: #1d3557;
       padding: 10px;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
     .numero.selecionado {
       background: #2ecc71;
-      color: black;
+      color: #000;
+      font-weight: bold;
     }
 
     .contador {
-      font-size: 20px;
-      margin: 15px 0;
+      font-size: 18px;
+      margin-bottom: 15px;
     }
 
     footer {
       margin-top: 20px;
       font-size: 14px;
-      opacity: 0.8;
+      opacity: 0.85;
     }
   </style>
 </head>
@@ -83,12 +86,106 @@
 
 <div class="contador" id="contador"></div>
 
-<div class="box">
-  <p><strong>🎯 Objetivo:</strong> Arrecadar R$ 4.000 para troca de faixa preta</p>
+<div class="container">
+
+  <p><strong>🎯 Objetivo:</strong> arrecadar fundos para a troca de faixa preta</p>
   <p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
+
   <p><strong>🏆 Prêmios:</strong><br>
-    🥇 1º Ovelha carneada<br>
-    🥈 2º Cesta Cacau Show
+    🥇 Ovelha carneada<br>
+    🥈 Cesta de chocolates Cacau Show
   </p>
 
-  <p><strong>📅 Sorteio:</strong> 25 de agos
+  <p><strong>📅 Sorteio:</strong> 25 de agosto às 10h<br>
+     <strong>📍 Transmissão:</strong> Instagram
+  </p>
+
+  <p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
+
+  <hr>
+
+  <h3>Escolha seu número</h3>
+  <div class="numeros" id="numeros"></div>
+
+  <input type="text" id="nome" placeholder="Seu nome completo">
+  <input type="text" id="whats" placeholder="WhatsApp com DDD">
+
+  <button onclick="reservar()">Reservar número</button>
+</div>
+
+<footer>
+  Após o pagamento via Pix, o número será confirmado.<br>
+  WhatsApp: 55 9999-29198
+</footer>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhFe3Pzx7iMH0Cnymjqg2yK-VaNr1tDu5FW-XlYQU7tFAxQDsxbSFV_qCWkRG4STdfAA/exec";
+  let selecionado = null;
+
+  // Gera números (ajuste até 1000 depois)
+  const numerosDiv = document.getElementById("numeros");
+  for (let i = 1; i <= 100; i++) {
+    const div = document.createElement("div");
+    div.className = "numero";
+    div.textContent = i.toString().padStart(3, "0");
+    div.onclick = () => selecionar(div);
+    numerosDiv.appendChild(div);
+  }
+
+  function selecionar(el) {
+    document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
+    el.classList.add("selecionado");
+    selecionado = el.textContent;
+  }
+
+  function reservar() {
+    const nome = document.getElementById("nome").value.trim();
+    const whats = document.getElementById("whats").value.trim();
+
+    if (!nome || !whats || !selecionado) {
+      alert("Preencha todos os campos e escolha um número.");
+      return;
+    }
+
+    const dados = new URLSearchParams();
+    dados.append("nome", nome);
+    dados.append("whats", whats);
+    dados.append("numero", selecionado);
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      body: dados
+    })
+    .then(() => {
+      alert("Número reservado! Envie o Pix para confirmar.");
+      window.open(
+        `https://wa.me/55${whats.replace(/\D/g,"")}?text=Olá! Reservei o número ${selecionado} na rifa da faixa preta. Já vou enviar o Pix.`,
+        "_blank"
+      );
+    })
+    .catch(() => alert("Erro ao enviar. Tente novamente."));
+  }
+
+  // Contador regressivo
+  const dataSorteio = new Date("2026-08-25T10:00:00").getTime();
+  setInterval(() => {
+    const agora = new Date().getTime();
+    const diff = dataSorteio - agora;
+
+    if (diff <= 0) {
+      document.getElementById("contador").innerText = "⏰ Sorteio hoje!";
+      return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById("contador").innerText =
+      `⏳ ${d}d ${h}h ${m}m ${s}s`;
+  }, 1000);
+</script>
+
+</body>
+</html>
