@@ -113,10 +113,9 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyN0airWnZSYmIN4ajtxO93u_sqZKU5BU6mmDM5GK4A9aegBtNiSejA3_iOI-_bT6PUg/exec";
 
-let selecionados = []; // múltiplos números selecionados
+let selecionados = [];
 let numerosComprados = [];
 
-// Carrega números já comprados do Google Sheets
 async function carregarNumerosComprados() {
   try {
     const res = await fetch(SCRIPT_URL);
@@ -127,7 +126,6 @@ async function carregarNumerosComprados() {
   }
 }
 
-// Gera 1000 números
 function gerarNumeros() {
   const numerosDiv = document.getElementById("numeros");
   for (let i = 1; i <= 1000; i++) {
@@ -145,7 +143,6 @@ function gerarNumeros() {
   }
 }
 
-// Seleção múltipla
 function selecionarNumero(el) {
   const numero = parseInt(el.innerText, 10);
   if (el.classList.contains("selecionado")) {
@@ -157,7 +154,6 @@ function selecionarNumero(el) {
   }
 }
 
-// Reserva múltiplos números
 async function reservar() {
   const nome = document.getElementById("nome").value.trim();
   const whats = document.getElementById("whats").value.trim();
@@ -167,7 +163,6 @@ async function reservar() {
     return;
   }
 
-  // verifica se algum número já está reservado
   for (let n of selecionados) {
     if (numerosComprados.includes(n)) {
       alert(`O número ${n} já está reservado. Remova da seleção.`);
@@ -184,21 +179,18 @@ async function reservar() {
 
       await fetch(SCRIPT_URL, { method: "POST", body: data });
 
-      // atualiza visual
       const el = [...document.querySelectorAll(".numero")].find(x => parseInt(x.innerText,10) === n);
       if (el) el.classList.add("ocupado");
       numerosComprados.push(n);
     }
 
-    // envia WhatsApp
     window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=Olá! Reservei os números ${selecionados.join(", ")} na rifa da faixa preta. Já vou enviar o Pix.`);
 
     alert("Números reservados com sucesso! Envie o Pix para confirmar.");
 
-    // gera recibo PDF
-    gerarReciboPDF(nome, whats, selecionados);
+    gerarReciboProfissional(nome, whats, selecionados);
 
-    selecionados = []; // limpa seleção
+    selecionados = [];
   } catch (e) {
     alert("Erro ao enviar. Tente novamente.");
   }
@@ -223,70 +215,69 @@ setInterval(() => {
   contador.innerText = `⏳ ${d}d ${h}h ${m}m ${s}s`;
 }, 1000);
 
-// Inicialização
 (async () => {
   await carregarNumerosComprados();
   gerarNumeros();
 })();
 
-// Função para gerar recibo PDF profissional
-async function gerarReciboPDF(nome, whats, numeros) {
+// Recibo profissional com QR Code Pix funcional
+function gerarReciboProfissional(nome, whats, numeros) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
   const data = new Date().toLocaleString("pt-BR");
   const valorTotal = numeros.length * 5;
 
-  // Título
-  doc.setFontSize(22);
-  doc.setTextColor(230, 57, 70);
-  doc.text("Recibo da Rifa – Faixa Preta 🥋", 105, 20, { align: "center" });
+  // Cores e cabeçalho
+  doc.setFillColor(230,57,70);
+  doc.rect(0,0,210,30,'F'); // faixa vermelha topo
+  doc.setFontSize(18);
+  doc.setTextColor(255,255,255);
+  doc.text("Recibo Rifa – Faixa Preta 🥋",105,20,{align:"center"});
 
-  // Subtítulo
-  doc.setFontSize(16);
-  doc.setTextColor(29, 155, 240);
-  doc.text("Adrian Silva Warth", 105, 30, { align: "center" });
+  // Logo (substitua URL pelo logo real)
+  doc.addImage("https://i.imgur.com/xK4XyYq.png","PNG",10,35,40,40);
 
+  // Dados comprador
   doc.setFontSize(12);
   doc.setTextColor(0,0,0);
-  doc.text(`Data: ${data}`, 20, 50);
-  doc.text(`Nome: ${nome}`, 20, 58);
-  doc.text(`WhatsApp: ${whats}`, 20, 66);
+  doc.text(`Data: ${data}`,60,40);
+  doc.text(`Nome: ${nome}`,60,48);
+  doc.text(`WhatsApp: ${whats}`,60,56);
 
-  // Números reservados
-  doc.text("Números Reservados:", 20, 78);
-  let y = 86;
-  numeros.forEach((n, i) => {
-    doc.text(`${n.toString().padStart(4,'0')}`, 30 + (i%10)*18, y);
-    if ((i+1)%10 === 0) y += 10;
+  // Tabela de números
+  let startY = 70;
+  doc.setFillColor(29,155,240);
+  doc.rect(10,startY,190,7,'F');
+  doc.setTextColor(255,255,255);
+  doc.text("Números Reservados",105,startY+5,{align:"center"});
+  doc.setTextColor(0,0,0);
+  startY += 15;
+  numeros.forEach((n,i)=>{
+    doc.text(`${n.toString().padStart(4,'0')}`,15 + (i%10)*20,startY + Math.floor(i/10)*10);
   });
 
   // Valor total
   doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
-  doc.text(`Valor Total: R$ ${valorTotal},00`, 20, y + 15);
+  doc.setFont("helvetica","bold");
+  doc.text(`Valor Total: R$ ${valorTotal},00`,15,startY + Math.ceil(numeros.length/10)*10 +10);
 
-  // Mensagem de agradecimento personalizada
+  // Mensagem personalizada
   doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  doc.text("Obrigado por ajudar a tornar possível a conquista da faixa preta! 🥋", 105, y + 30, { align: "center" });
-  doc.text("Seu apoio faz toda a diferença! 🎉", 105, y + 38, { align: "center" });
+  doc.setFont("helvetica","normal");
+  doc.text("Obrigado por ajudar a tornar possível a conquista da faixa preta! 🥋",105,startY + Math.ceil(numeros.length/10)*10 +20,{align:"center"});
+  doc.text("Seu apoio faz toda a diferença! 🎉",105,startY + Math.ceil(numeros.length/10)*10 +28,{align:"center"});
 
-  // QR Code para Pix
+  // QR Code Pix dinâmico
+  const pixText = `00020101021226860014br.gov.bcb.pix0114adrianwarth8@gmail.com520400005303986540${valorTotal.toFixed(2).replace('.', '')}5802BR5925Adrian Silva Warth6009Santa Maria6108054090006304XXXX`;
   const qrDiv = document.createElement("div");
-  new QRCode(qrDiv, {
-    text: "PIX: adrianwarth8@gmail.com",
-    width: 100,
-    height: 100
-  });
+  new QRCode(qrDiv,{text:pixText,width:80,height:80});
   const canvas = qrDiv.querySelector("canvas");
   const imgData = canvas.toDataURL("image/png");
-  doc.addImage(imgData, 'PNG', 150, y, 40, 40);
+  doc.addImage(imgData,'PNG',150,startY + Math.ceil(numeros.length/10)*10 +5,40,40);
 
-  // Baixar PDF
+  // Salvar PDF
   doc.save(`Recibo_Rifa_${nome.replace(/\s+/g,'_')}.pdf`);
 }
 </script>
-
 </body>
 </html>
