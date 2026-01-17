@@ -1,81 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Rifa Faixa Preta - Adrian Silva Warth</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0b1c2d;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 { color: #e63946; }
-    h2 { color: #1d9bf0; }
-
-    .box {
-      background: #14213d;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: auto;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-
-    button {
-      background: #e63946;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #ff4d5a;
-    }
-
-    .numeros {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-      margin-top: 15px;
-    }
-
-    .numero {
-      background: #1d3557;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .numero.selecionado {
-      background: #2ecc71;
-      color: black;
-    }
-
-    .contador {
-      font-size: 20px;
-      margin: 15px 0;
-    }
-
-    footer {
-      margin-top: 20px;
-      font-size: 14px;
-      opacity: 0.8;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Rifa Faixa Preta - Adrian Silva Warth</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0b1c2d;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 { color: #e63946; }
+  h2 { color: #1d9bf0; }
+  .box {
+    background: #14213d;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+  }
+  input, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+  }
+  button {
+    background: #e63946;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  button:hover {
+    background: #ff4d5a;
+  }
+  .numeros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+    gap: 6px;
+    margin-top: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .numero {
+    background: #1d3557;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .numero.selecionado {
+    background: #2ecc71;
+    color: black;
+  }
+  .numero.ocupado {
+    background: #e63946;
+    color: white;
+    cursor: not-allowed;
+  }
+  .contador {
+    font-size: 20px;
+    margin: 15px 0;
+  }
+  footer {
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+</style>
 </head>
-
 <body>
 
 <h1>RIFA – FAIXA PRETA 🥋</h1>
@@ -90,7 +88,6 @@
     🥇 1º Ovelha carneada<br>
     🥈 2º Cesta Cacau Show
   </p>
-
   <p><strong>📅 Sorteio:</strong> 25 de agosto às 10h (Instagram)</p>
   <p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
 
@@ -101,7 +98,6 @@
 
   <input type="text" id="nome" placeholder="Seu nome completo">
   <input type="text" id="whats" placeholder="WhatsApp com DDD">
-
   <button onclick="reservar()">Reservar número</button>
 </div>
 
@@ -111,27 +107,47 @@
 </footer>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhFe3Pzx7iMH0Cnymjqg2yK-VaNr1tDu5FW-XlYQU7tFAxQDsxbSFV_qCWkRG4STdfAA/exec";
+const SCRIPT_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhcGliQr3EU88m7APA_jlep6wlNBrm5xqml1rwADXKcRptld0YRDy8PO864zqCBbWG8pKx_lXB-f-m2TDHROShCeU4p4yXDwYw9iVIFyaBOim0HFDBO9BkQqwAVboSGjIQiKj8y5BWr09rMY5PVkyI1o0c7KnZKODHSYVqzoWFVFL_eJxsrdO4UOIyuvRfVeGNr7ctKYG-5yUfuQ0mQ0aiySHRO6zHTZIyCx6iVutNj3ToZBJKQDsj88mIcbebwoxVvqbY0l_6N2vkzpuTC5w2C7c1FDxYpszeDmNdY&lib=M-nKPMHBQUZjCT-SbCCtL3UX-3ZsdzgN6";
 
 let selecionado = null;
+let numerosComprados = [];
 
-// gerar números
-const numerosDiv = document.getElementById("numeros");
-for (let i = 1; i <= 100; i++) {
-  const n = document.createElement("div");
-  n.className = "numero";
-  n.innerText = i.toString().padStart(3, "0");
-  n.onclick = () => selecionarNumero(n);
-  numerosDiv.appendChild(n);
+// Carrega números já comprados do Google Sheets
+async function carregarNumerosComprados() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    numerosComprados = await res.json();
+  } catch (e) {
+    console.error("Erro ao carregar números comprados:", e);
+  }
+}
+
+// Gera 1000 números
+function gerarNumeros() {
+  const numerosDiv = document.getElementById("numeros");
+  for (let i = 1; i <= 1000; i++) {
+    const n = document.createElement("div");
+    n.className = "numero";
+    n.innerText = i.toString().padStart(4, "0");
+
+    if (numerosComprados.includes(i)) {
+      n.classList.add("ocupado");
+    } else {
+      n.onclick = () => selecionarNumero(n);
+    }
+
+    numerosDiv.appendChild(n);
+  }
 }
 
 function selecionarNumero(el) {
   document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
   el.classList.add("selecionado");
-  selecionado = el.innerText;
+  selecionado = parseInt(el.innerText, 10);
 }
 
-function reservar() {
+// Função de reserva
+async function reservar() {
   const nome = document.getElementById("nome").value.trim();
   const whats = document.getElementById("whats").value.trim();
 
@@ -140,38 +156,56 @@ function reservar() {
     return;
   }
 
+  if (numerosComprados.includes(selecionado)) {
+    alert("Número já reservado. Escolha outro.");
+    return;
+  }
+
   const data = new URLSearchParams();
   data.append("nome", nome);
   data.append("whats", whats);
   data.append("numero", selecionado);
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: data
-  })
-  .then(() => {
+  try {
+    await fetch(SCRIPT_URL, { method: "POST", body: data });
     alert("Número reservado com sucesso! Envie o Pix para confirmar.");
     window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=Olá! Reservei o número ${selecionado} na rifa da faixa preta. Já vou enviar o Pix.`);
-  })
-  .catch(() => alert("Erro ao enviar. Tente novamente."));
+
+    // Atualiza visual do número reservado
+    const el = [...document.querySelectorAll(".numero")].find(n => parseInt(n.innerText,10) === selecionado);
+    if (el) el.classList.add("ocupado");
+
+    numerosComprados.push(selecionado);
+
+  } catch (e) {
+    alert("Erro ao enviar. Tente novamente.");
+  }
 }
 
-// contador
+// Contador regressivo
 const alvo = new Date("2026-08-25T10:00:00").getTime();
 setInterval(() => {
   const agora = new Date().getTime();
   const diff = alvo - agora;
+  const contador = document.getElementById("contador");
+
   if (diff < 0) {
-    document.getElementById("contador").innerText = "⏰ Sorteio hoje!";
+    contador.innerText = "⏰ Sorteio hoje!";
     return;
   }
+
   const d = Math.floor(diff / (1000*60*60*24));
   const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
   const m = Math.floor((diff%(1000*60*60))/(1000*60));
   const s = Math.floor((diff%(1000*60))/1000);
-  document.getElementById("contador").innerText =
-    `⏳ ${d}d ${h}h ${m}m ${s}s`;
+  contador.innerText = `⏳ ${d}d ${h}h ${m}m ${s}s`;
 }, 1000);
+
+// Inicialização
+(async () => {
+  await carregarNumerosComprados();
+  gerarNumeros();
+})();
 </script>
 
 </body>
