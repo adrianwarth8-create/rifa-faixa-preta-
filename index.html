@@ -5,73 +5,21 @@
 <title>Rifa Faixa Preta - Adrian Silva Warth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #0b1c2d;
-    color: white;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-  }
+  body { font-family: Arial, sans-serif; background: #0b1c2d; color: white; text-align: center; margin: 0; padding: 20px; }
   h1 { color: #e63946; }
   h2 { color: #1d9bf0; }
-  .box {
-    background: #14213d;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 600px;
-    margin: auto;
-  }
-  input, button {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 6px;
-    border: none;
-    font-size: 16px;
-  }
-  button {
-    background: #e63946;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  button:hover {
-    background: #ff4d5a;
-  }
-  .numeros {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
-    gap: 6px;
-    margin-top: 15px;
-    max-height: 400px;
-    overflow-y: auto;
-  }
-  .numero {
-    background: #1d3557;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .numero.selecionado {
-    background: #2ecc71;
-    color: black;
-  }
-  .numero.ocupado {
-    background: #e63946;
-    color: white;
-    cursor: not-allowed;
-  }
-  .contador {
-    font-size: 20px;
-    margin: 15px 0;
-  }
-  footer {
-    margin-top: 20px;
-    font-size: 14px;
-    opacity: 0.8;
-  }
+  .box { background: #14213d; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; }
+  input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; font-size: 16px; }
+  button { background: #e63946; color: white; cursor: pointer; transition: all 0.2s ease; }
+  button:hover { background: #ff4d5a; }
+  .numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(45px, 1fr)); gap: 6px; margin-top: 15px; max-height: 400px; overflow-y: auto; }
+  .numero { background: #1d3557; padding: 10px; border-radius: 5px; cursor: pointer; transition: all 0.2s ease; }
+  .numero.selecionado { background: #2ecc71; color: black; }
+  .numero.ocupado { background: #e63946; color: white; cursor: not-allowed; }
+  .contador { font-size: 20px; margin: 15px 0; }
+  footer { margin-top: 20px; font-size: 14px; opacity: 0.8; }
+  .pix-btn { display: inline-block; padding: 5px 10px; margin-left: 10px; background:#1d9bf0; color:white; border-radius:5px; cursor:pointer; }
+  .pix-btn:hover { background:#0a7bc1; }
 </style>
 </head>
 <body>
@@ -84,12 +32,13 @@
 <div class="box">
   <p><strong>🎯 Objetivo:</strong> Arrecadar R$ 4.000 para troca de faixa preta</p>
   <p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
-  <p><strong>🏆 Prêmios:</strong><br>
-    🥇 1º Ovelha carneada<br>
-    🥈 2º Cesta Cacau Show
-  </p>
+  <p><strong>🏆 Prêmios:</strong><br> 🥇 1º Ovelha carneada<br> 🥈 2º Cesta Cacau Show</p>
   <p><strong>📅 Sorteio:</strong> 25 de agosto às 10h (Instagram)</p>
-  <p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
+
+  <p>
+    <strong>📧 Pix:</strong> <span id="pix">adrianwarth8@gmail.com</span>
+    <span class="pix-btn" onclick="copiarPix()">Copiar Pix</span>
+  </p>
 
   <hr>
 
@@ -106,184 +55,144 @@
   Contato: WhatsApp 55999929198
 </footer>
 
-<!-- Bibliotecas para PDF e QR Code -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyN0airWnZSYmIN4ajtxO93u_sqZKU5BU6mmDM5GK4A9aegBtNiSejA3_iOI-_bT6PUg/exec";
 
-let selecionados = []; // múltiplos números selecionados
+let selecionados = [];
 let numerosComprados = [];
 
-// Carrega números já comprados do Google Sheets
 async function carregarNumerosComprados() {
   try {
     const res = await fetch(SCRIPT_URL);
     numerosComprados = await res.json();
     numerosComprados = [...new Set(numerosComprados)];
-  } catch (e) {
-    console.error("Erro ao carregar números comprados:", e);
-  }
+  } catch(e){ console.error("Erro ao carregar números comprados", e); }
 }
 
-// Gera 1000 números
 function gerarNumeros() {
   const numerosDiv = document.getElementById("numeros");
-  for (let i = 1; i <= 1000; i++) {
+  for(let i=1;i<=1000;i++){
     const n = document.createElement("div");
-    n.className = "numero";
-    n.innerText = i.toString().padStart(4, "0");
-
-    if (numerosComprados.includes(i)) {
-      n.classList.add("ocupado");
-    } else {
-      n.onclick = () => selecionarNumero(n);
-    }
-
+    n.className="numero";
+    n.innerText=i.toString().padStart(4,"0");
+    if(numerosComprados.includes(i)) n.classList.add("ocupado");
+    else n.onclick=()=>selecionarNumero(n);
     numerosDiv.appendChild(n);
   }
 }
 
-// Seleção múltipla
-function selecionarNumero(el) {
-  const numero = parseInt(el.innerText, 10);
-  if (el.classList.contains("selecionado")) {
+function selecionarNumero(el){
+  const numero=parseInt(el.innerText,10);
+  if(el.classList.contains("selecionado")){
     el.classList.remove("selecionado");
-    selecionados = selecionados.filter(n => n !== numero);
+    selecionados = selecionados.filter(n=>n!==numero);
   } else {
     el.classList.add("selecionado");
     selecionados.push(numero);
   }
 }
 
-// Reserva múltiplos números
-async function reservar() {
-  const nome = document.getElementById("nome").value.trim();
-  const whats = document.getElementById("whats").value.trim();
-
-  if (selecionados.length === 0 || !nome || !whats) {
+async function reservar(){
+  const nome=document.getElementById("nome").value.trim();
+  const whats=document.getElementById("whats").value.trim();
+  if(selecionados.length===0||!nome||!whats){
     alert("Preencha todos os campos e escolha pelo menos um número.");
     return;
   }
-
-  // verifica se algum número já está reservado
-  for (let n of selecionados) {
-    if (numerosComprados.includes(n)) {
+  for(let n of selecionados){
+    if(numerosComprados.includes(n)){
       alert(`O número ${n} já está reservado. Remova da seleção.`);
       return;
     }
   }
-
-  try {
-    for (let n of selecionados) {
-      const data = new URLSearchParams();
-      data.append("nome", nome);
-      data.append("whats", whats);
-      data.append("numero", n);
-
-      await fetch(SCRIPT_URL, { method: "POST", body: data });
-
-      // atualiza visual
-      const el = [...document.querySelectorAll(".numero")].find(x => parseInt(x.innerText,10) === n);
-      if (el) el.classList.add("ocupado");
+  try{
+    for(let n of selecionados){
+      const data=new URLSearchParams();
+      data.append("nome",nome);
+      data.append("whats",whats);
+      data.append("numero",n);
+      await fetch(SCRIPT_URL,{method:"POST",body:data});
+      const el=[...document.querySelectorAll(".numero")].find(x=>parseInt(x.innerText,10)===n);
+      if(el) el.classList.add("ocupado");
       numerosComprados.push(n);
     }
 
-    // envia WhatsApp
     window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=Olá! Reservei os números ${selecionados.join(", ")} na rifa da faixa preta. Já vou enviar o Pix.`);
-
     alert("Números reservados com sucesso! Envie o Pix para confirmar.");
-
-    // gera recibo PDF
-    gerarReciboPDF(nome, whats, selecionados);
-
-    selecionados = []; // limpa seleção
-  } catch (e) {
-    alert("Erro ao enviar. Tente novamente.");
-  }
+    gerarReciboPDF(nome,whats,selecionados);
+    selecionados=[];
+  }catch(e){ alert("Erro ao enviar. Tente novamente."); }
 }
 
-// Contador regressivo
-const alvo = new Date("2026-08-25T10:00:00").getTime();
-setInterval(() => {
-  const agora = new Date().getTime();
-  const diff = alvo - agora;
-  const contador = document.getElementById("contador");
+const alvo=new Date("2026-08-25T10:00:00").getTime();
+setInterval(()=>{
+  const agora=new Date().getTime();
+  const diff=alvo-agora;
+  const contador=document.getElementById("contador");
+  if(diff<0){ contador.innerText="⏰ Sorteio hoje!"; return; }
+  const d=Math.floor(diff/(1000*60*60*24));
+  const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const m=Math.floor((diff%(1000*60*60))/(1000*60));
+  const s=Math.floor((diff%(1000*60))/1000);
+  contador.innerText=`⏳ ${d}d ${h}h ${m}m ${s}s`;
+},1000);
 
-  if (diff < 0) {
-    contador.innerText = "⏰ Sorteio hoje!";
-    return;
-  }
+(async()=>{ await carregarNumerosComprados(); gerarNumeros(); })();
 
-  const d = Math.floor(diff / (1000*60*60*24));
-  const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-  const m = Math.floor((diff%(1000*60*60))/(1000*60));
-  const s = Math.floor((diff%(1000*60))/1000);
-  contador.innerText = `⏳ ${d}d ${h}h ${m}m ${s}s`;
-}, 1000);
+function copiarPix(){
+  const pix=document.getElementById("pix").innerText;
+  navigator.clipboard.writeText(pix)
+    .then(()=>alert("Chave Pix copiada com sucesso! ✅"))
+    .catch(()=>alert("Erro ao copiar a chave Pix."));
+}
 
-// Inicialização
-(async () => {
-  await carregarNumerosComprados();
-  gerarNumeros();
-})();
-
-// Função para gerar recibo PDF profissional
-async function gerarReciboPDF(nome, whats, numeros) {
+function gerarReciboPDF(nome,whats,numeros){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
   const data = new Date().toLocaleString("pt-BR");
   const valorTotal = numeros.length * 5;
 
-  // Título
-  doc.setFontSize(22);
-  doc.setTextColor(230, 57, 70);
-  doc.text("Recibo da Rifa – Faixa Preta 🥋", 105, 20, { align: "center" });
+  // Fundo azul-marinho
+  doc.setFillColor(10, 25, 50);
+  doc.rect(0, 0, 210, 297, 'F');
 
-  // Subtítulo
-  doc.setFontSize(16);
-  doc.setTextColor(29, 155, 240);
-  doc.text("Adrian Silva Warth", 105, 30, { align: "center" });
+  // Cabeçalho
+  doc.setFontSize(18);
+  doc.setTextColor(255, 215, 0);
+  doc.text("Recibo Rifa – Faixa Preta 🥋", 105, 20, { align: "center" });
 
+  // Logo (opcional)
+  doc.addImage("https://i.imgur.com/xK4XyYq.png", "PNG", 10, 30, 40, 40);
+
+  // Dados do comprador em dourado
   doc.setFontSize(12);
-  doc.setTextColor(0,0,0);
-  doc.text(`Data: ${data}`, 20, 50);
-  doc.text(`Nome: ${nome}`, 20, 58);
-  doc.text(`WhatsApp: ${whats}`, 20, 66);
+  doc.setTextColor(255, 215, 0);
+  doc.text(`Data: ${data}`, 60, 40);
+  doc.text(`Nome: ${nome}`, 60, 48);
+  doc.text(`WhatsApp: ${whats}`, 60, 56);
 
-  // Números reservados
-  doc.text("Números Reservados:", 20, 78);
-  let y = 86;
+  // Números reservados em dourado
+  let startY = 70;
+  doc.text("Números Reservados:", 20, startY);
+  startY += 8;
   numeros.forEach((n, i) => {
-    doc.text(`${n.toString().padStart(4,'0')}`, 30 + (i%10)*18, y);
-    if ((i+1)%10 === 0) y += 10;
+    doc.text(`${n.toString().padStart(4,'0')}`, 15 + (i % 10) * 20, startY + Math.floor(i / 10) * 10);
   });
 
-  // Valor total
+  // Valor total em dourado
   doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
-  doc.text(`Valor Total: R$ ${valorTotal},00`, 20, y + 15);
+  doc.setFont("helvetica","bold");
+  doc.text(`Valor Total: R$ ${valorTotal},00`, 15, startY + Math.ceil(numeros.length/10)*10 + 10);
 
-  // Mensagem de agradecimento personalizada
+  // Mensagem de agradecimento em branco
   doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  doc.text("Obrigado por ajudar a tornar possível a conquista da faixa preta! 🥋", 105, y + 30, { align: "center" });
-  doc.text("Seu apoio faz toda a diferença! 🎉", 105, y + 38, { align: "center" });
+  doc.setFont("helvetica","normal");
+  doc.setTextColor(255,255,255);
+  doc.text("Obrigado por ajudar a tornar possível a conquista da faixa preta! 🥋", 105, startY + Math.ceil(numeros.length/10)*10 + 20, {align:"center"});
+  doc.text("Seu apoio faz toda a diferença! 🎉", 105, startY + Math.ceil(numeros.length/10)*10 + 28, {align:"center"});
 
-  // QR Code para Pix
-  const qrDiv = document.createElement("div");
-  new QRCode(qrDiv, {
-    text: "PIX: adrianwarth8@gmail.com",
-    width: 100,
-    height: 100
-  });
-  const canvas = qrDiv.querySelector("canvas");
-  const imgData = canvas.toDataURL("image/png");
-  doc.addImage(imgData, 'PNG', 150, y, 40, 40);
-
-  // Baixar PDF
   doc.save(`Recibo_Rifa_${nome.replace(/\s+/g,'_')}.pdf`);
 }
 </script>
