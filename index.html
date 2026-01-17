@@ -1,209 +1,157 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Rifa Faixa Preta – Adrian Silva Warth</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Rifa Faixa Preta 🥋</title>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #0b1c2d;
-  color: #fff;
-  text-align: center;
-  margin: 0;
-  padding: 20px;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
 
-h1 { color: #e63946; }
-h2 { color: #1d9bf0; }
+    header {
+      background: #000;
+      color: #fff;
+      padding: 20px;
+    }
 
-.container {
-  max-width: 520px;
-  margin: auto;
-  background: #14213d;
-  padding: 20px;
-  border-radius: 12px;
-}
+    h1 {
+      margin: 0;
+    }
 
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: none;
-  font-size: 16px;
-}
+    .pix {
+      background: #fff;
+      margin: 20px auto;
+      padding: 15px;
+      max-width: 400px;
+      border-radius: 8px;
+      font-size: 18px;
+    }
 
-button {
-  background: #e63946;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
+    .contador {
+      font-size: 22px;
+      margin: 20px;
+      color: #d00000;
+      font-weight: bold;
+    }
 
-button:hover { background: #ff4d5a; }
+    .numeros {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 10px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
 
-.numeros {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  margin: 15px 0;
-}
+    .numero {
+      padding: 15px;
+      background: #2ecc71;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-.numero {
-  background: #1d3557;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+    .vendido {
+      background: #e74c3c !important;
+      cursor: not-allowed;
+    }
 
-.numero.selecionado {
-  background: #2ecc71;
-  color: #000;
-  font-weight: bold;
-}
-
-.numero.ocupado {
-  background: #e63946;
-  cursor: not-allowed;
-}
-
-.contador {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
-footer {
-  margin-top: 20px;
-  font-size: 14px;
-  opacity: 0.85;
-}
-</style>
+    footer {
+      margin: 30px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>RIFA – FAIXA PRETA 🥋</h1>
-<h2>Adrian Silva Warth</h2>
+<header>
+  <h1>🎟️ Rifa Faixa Preta 🥋</h1>
+  <p>Escolha seu número da sorte</p>
+</header>
+
+<div class="pix">
+  <strong>💳 Pagamento via Pix</strong><br>
+  Chave Pix:<br>
+  <b>55999929198</b>
+</div>
 
 <div class="contador" id="contador"></div>
 
-<div class="container">
+<h2>Números disponíveis</h2>
 
-<p><strong>🎯 Objetivo:</strong> arrecadar fundos para a troca de faixa preta</p>
-<p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
-
-<p><strong>🏆 Prêmios:</strong><br>
-🥇 Ovelha carneada<br>
-🥈 Cesta Cacau Show
-</p>
-
-<p><strong>📅 Sorteio:</strong> 25 de agosto às 10h<br>
-<strong>📍 Transmissão:</strong> Instagram
-</p>
-
-<p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
-
-<hr>
-
-<h3>Escolha seu número</h3>
-<div class="numeros" id="numeros"></div>
-
-<input type="text" id="nome" placeholder="Seu nome completo">
-<input type="text" id="whats" placeholder="WhatsApp com DDD">
-
-<button onclick="reservar()">Reservar número</button>
-</div>
+<div class="numeros" id="listaNumeros"></div>
 
 <footer>
-Após o pagamento via Pix, o número será confirmado.<br>
-WhatsApp: 55 9999-29198
+  Adquira seu número pelo WhatsApp 📲<br>
+  <b>55 99992-9198</b>
 </footer>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzf34zIFwp_hLZ_v25zEoXAD63BQGOJDRMRfsmxkVrP0FR9r0jCz1UkmuYMy7JMNRQLEw/exec";
+  const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzlvqEpyF5qt6MFjivFuTjWkGzQHQEHtBYCfkH926-v1YPjeqXQCzndQQe9OcmeXgaVyA/exec";
+  const TOTAL_NUMEROS = 200;
 
-let selecionado = null;
-let numerosOcupados = [];
+  async function carregarNumerosVendidos() {
+    const response = await fetch(URL_SCRIPT);
+    const vendidos = await response.json();
+    return vendidos.map(n => n.toString().padStart(3, '0'));
+  }
 
-// GERAR NÚMEROS (altere para 1000 depois)
-const numerosDiv = document.getElementById("numeros");
-for (let i = 1; i <= 100; i++) {
-  const div = document.createElement("div");
-  div.className = "numero";
-  div.textContent = i.toString().padStart(3, "0");
-  div.onclick = () => selecionar(div);
-  numerosDiv.appendChild(div);
-}
+  async function montarNumeros() {
+    const vendidos = await carregarNumerosVendidos();
+    const container = document.getElementById("listaNumeros");
 
-// BUSCAR NÚMEROS OCUPADOS
-fetch(SCRIPT_URL)
-  .then(res => res.json())
-  .then(lista => {
-    numerosOcupados = lista;
-    document.querySelectorAll(".numero").forEach(div => {
-      if (numerosOcupados.includes(div.textContent)) {
-        div.classList.add("ocupado");
-        div.onclick = null;
+    for (let i = 1; i <= TOTAL_NUMEROS; i++) {
+      const numero = i.toString().padStart(3, '0');
+      const div = document.createElement("div");
+      div.classList.add("numero");
+      div.textContent = numero;
+
+      if (vendidos.includes(numero)) {
+        div.classList.add("vendido");
+      } else {
+        div.onclick = () => {
+          window.open(
+            `https://wa.me/55999929198?text=Olá! Quero reservar o número ${numero} da rifa 🥋`,
+            "_blank"
+          );
+        };
       }
-    });
-  });
 
-// SELECIONAR
-function selecionar(el) {
-  if (el.classList.contains("ocupado")) return;
-  document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
-  el.classList.add("selecionado");
-  selecionado = el.textContent;
-}
-
-// RESERVAR
-function reservar() {
-  const nome = document.getElementById("nome").value.trim();
-  const whats = document.getElementById("whats").value.trim();
-
-  if (!nome || !whats || !selecionado) {
-    alert("Preencha todos os campos e escolha um número.");
-    return;
+      container.appendChild(div);
+    }
   }
 
-  const dados = new URLSearchParams();
-  dados.append("nome", nome);
-  dados.append("whats", whats);
-  dados.append("numero", selecionado);
+  function iniciarContador() {
+    const dataSorteio = new Date("2026-02-01T20:00:00").getTime();
 
-  fetch(SCRIPT_URL, { method: "POST", body: dados })
-    .then(() => {
-      alert("Número reservado com sucesso! Envie o Pix para confirmar.");
-      window.open(
-        `https://wa.me/55${whats.replace(/\D/g,"")}?text=Olá! Reservei o número ${selecionado} na rifa da faixa preta. Já vou enviar o Pix.`,
-        "_blank"
-      );
-      location.reload();
-    })
-    .catch(() => alert("Erro ao reservar. Tente novamente."));
-}
+    setInterval(() => {
+      const agora = new Date().getTime();
+      const diff = dataSorteio - agora;
 
-// CONTADOR
-const dataSorteio = new Date("2026-08-25T10:00:00").getTime();
-setInterval(() => {
-  const agora = new Date().getTime();
-  const diff = dataSorteio - agora;
+      if (diff <= 0) {
+        document.getElementById("contador").innerHTML = "🎉 Sorteio hoje!";
+        return;
+      }
 
-  if (diff <= 0) {
-    document.getElementById("contador").innerText = "⏰ Sorteio hoje!";
-    return;
+      const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diff / (1000 * 60)) % 60);
+      const segundos = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("contador").innerHTML =
+        `⏳ Sorteio em ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+    }, 1000);
   }
 
-  const d = Math.floor(diff / (1000*60*60*24));
-  const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-  const m = Math.floor((diff%(1000*60*60))/(1000*60));
-  const s = Math.floor((diff%(1000*60))/1000);
-
-  document.getElementById("contador").innerText =
-    `⏳ ${d}d ${h}h ${m}m ${s}s`;
-}, 1000);
+  montarNumeros();
+  iniciarContador();
 </script>
 
 </body>
