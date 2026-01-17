@@ -1,61 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Rifa Faixa Preta – Adrian Warth</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <title>Rifa Faixa Preta - Adrian Silva Warth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #0a1a2a, #001f3f);
-      color: #fff;
+      font-family: Arial, sans-serif;
+      background: #0b1c2d;
+      color: white;
       text-align: center;
-    }
-
-    h1 { margin-top: 20px; }
-    h2 { margin-bottom: 10px; }
-
-    .contador {
-      font-size: 18px;
-      margin: 10px 0 20px;
-      color: #ffcc00;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 10px;
+      margin: 0;
       padding: 20px;
-      max-width: 900px;
-      margin: auto;
     }
+    h1 { color: #e63946; }
+    h2 { color: #1d9bf0; }
 
-    .numero {
-      background: #123;
-      padding: 15px 0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-
-    .numero:hover {
-      background: #1e90ff;
-    }
-
-    .vendido {
-      background: #8b0000 !important;
-      cursor: not-allowed;
-    }
-
-    .form {
-      background: rgba(0,0,0,0.5);
+    .box {
+      background: #14213d;
       padding: 20px;
-      max-width: 400px;
-      margin: 30px auto;
       border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
     }
 
     input, button {
@@ -68,18 +35,41 @@
     }
 
     button {
-      background: #c62828;
-      color: #fff;
-      font-weight: bold;
+      background: #e63946;
+      color: white;
       cursor: pointer;
     }
 
     button:hover {
-      background: #ff0000;
+      background: #ff4d5a;
+    }
+
+    .numeros {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 15px;
+    }
+
+    .numero {
+      background: #1d3557;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .numero.selecionado {
+      background: #2ecc71;
+      color: black;
+    }
+
+    .contador {
+      font-size: 20px;
+      margin: 15px 0;
     }
 
     footer {
-      margin: 20px;
+      margin-top: 20px;
       font-size: 14px;
       opacity: 0.8;
     }
@@ -88,120 +78,100 @@
 
 <body>
 
-<h1>🎟️ Rifa Solidária</h1>
-<h2>Faixa Preta – Taekwondo</h2>
+<h1>RIFA – FAIXA PRETA 🥋</h1>
+<h2>Adrian Silva Warth</h2>
 
 <div class="contador" id="contador"></div>
 
-<p>Valor: <strong>R$ 5,00</strong> por número</p>
+<div class="box">
+  <p><strong>🎯 Objetivo:</strong> Arrecadar R$ 4.000 para troca de faixa preta</p>
+  <p><strong>💰 Valor:</strong> R$ 5,00 por número</p>
+  <p><strong>🏆 Prêmios:</strong><br>
+    🥇 1º Ovelha carneada<br>
+    🥈 2º Cesta Cacau Show
+  </p>
 
-<div class="grid" id="grid"></div>
+  <p><strong>📅 Sorteio:</strong> 25 de agosto às 10h (Instagram)</p>
+  <p><strong>📧 Pix:</strong> adrianwarth8@gmail.com</p>
 
-<div class="form">
-  <h3>Reservar número</h3>
-  <input type="text" id="nome" placeholder="Nome completo" />
-  <input type="text" id="whats" placeholder="WhatsApp (DDD + número)" />
-  <input type="text" id="numeroSelecionado" placeholder="Número escolhido" readonly />
+  <hr>
+
+  <h3>Escolha seu número</h3>
+  <div class="numeros" id="numeros"></div>
+
+  <input type="text" id="nome" placeholder="Seu nome completo">
+  <input type="text" id="whats" placeholder="WhatsApp com DDD">
+
   <button onclick="reservar()">Reservar número</button>
 </div>
 
 <footer>
-  Sorteio: <strong>25 de agosto às 10h</strong> – Instagram<br>
-  Dúvidas: WhatsApp 55999929198
+  Após o Pix, o número será confirmado.<br>
+  Contato: WhatsApp 55999929198
 </footer>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzI26GdLBO17EX5jB2q1faSmuq3u1NePst2lzvfAykMHEViyd8VpnwTovUtlantk6vtLw/exec";
-  const TOTAL = 1000;
-  let vendidos = [];
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhFe3Pzx7iMH0Cnymjqg2yK-VaNr1tDu5FW-XlYQU7tFAxQDsxbSFV_qCWkRG4STdfAA/exec";
 
-  function formatar(n) {
-    return n.toString().padStart(3, "0");
+let selecionado = null;
+
+// gerar números
+const numerosDiv = document.getElementById("numeros");
+for (let i = 1; i <= 100; i++) {
+  const n = document.createElement("div");
+  n.className = "numero";
+  n.innerText = i.toString().padStart(3, "0");
+  n.onclick = () => selecionarNumero(n);
+  numerosDiv.appendChild(n);
+}
+
+function selecionarNumero(el) {
+  document.querySelectorAll(".numero").forEach(n => n.classList.remove("selecionado"));
+  el.classList.add("selecionado");
+  selecionado = el.innerText;
+}
+
+function reservar() {
+  const nome = document.getElementById("nome").value.trim();
+  const whats = document.getElementById("whats").value.trim();
+
+  if (!selecionado || !nome || !whats) {
+    alert("Preencha todos os campos e escolha um número.");
+    return;
   }
 
-  function criarGrid() {
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
+  const data = new URLSearchParams();
+  data.append("nome", nome);
+  data.append("whats", whats);
+  data.append("numero", selecionado);
 
-    for (let i = 1; i <= TOTAL; i++) {
-      const num = formatar(i);
-      const div = document.createElement("div");
-      div.className = "numero";
-      div.innerText = num;
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: data
+  })
+  .then(() => {
+    alert("Número reservado com sucesso! Envie o Pix para confirmar.");
+    window.open(`https://wa.me/55${whats.replace(/\D/g,'')}?text=Olá! Reservei o número ${selecionado} na rifa da faixa preta. Já vou enviar o Pix.`);
+  })
+  .catch(() => alert("Erro ao enviar. Tente novamente."));
+}
 
-      if (vendidos.includes(num)) {
-        div.classList.add("vendido");
-      } else {
-        div.onclick = () => {
-          document.getElementById("numeroSelecionado").value = num;
-        };
-      }
-
-      grid.appendChild(div);
-    }
+// contador
+const alvo = new Date("2026-08-25T10:00:00").getTime();
+setInterval(() => {
+  const agora = new Date().getTime();
+  const diff = alvo - agora;
+  if (diff < 0) {
+    document.getElementById("contador").innerText = "⏰ Sorteio hoje!";
+    return;
   }
-
-  function carregarVendidos() {
-    fetch(SCRIPT_URL)
-      .then(res => res.json())
-      .then(data => {
-        vendidos = data;
-        criarGrid();
-      })
-      .catch(() => alert("Erro ao carregar números"));
-  }
-
-  function reservar() {
-    const nome = document.getElementById("nome").value.trim();
-    const whats = document.getElementById("whats").value.trim();
-    const numero = document.getElementById("numeroSelecionado").value;
-
-    if (!nome || !whats || !numero) {
-      alert("Preencha todos os campos");
-      return;
-    }
-
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({ nome, whats, numero })
-    })
-    .then(res => res.json())
-    .then(resp => {
-      if (resp.status === "ok") {
-        window.open(
-          `https://wa.me/55${whats}?text=Olá! Reservei o número ${numero} da rifa da Faixa Preta.`,
-          "_blank"
-        );
-        alert("Número reservado com sucesso!");
-        carregarVendidos();
-      } else {
-        alert(resp.mensagem || "Erro ao reservar");
-      }
-    })
-    .catch(() => alert("Erro ao reservar. Tente novamente."));
-  }
-
-  function contador() {
-    const fim = new Date("2026-08-25T10:00:00");
-    const agora = new Date();
-    const diff = fim - agora;
-
-    if (diff <= 0) {
-      document.getElementById("contador").innerText = "Sorteio em andamento!";
-      return;
-    }
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const m = Math.floor((diff / (1000 * 60)) % 60);
-
-    document.getElementById("contador").innerText =
-      `⏳ Faltam ${d} dias, ${h}h ${m}min para o sorteio`;
-  }
-
-  carregarVendidos();
-  contador();
-  setInterval(contador, 60000);
+  const d = Math.floor(diff / (1000*60*60*24));
+  const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const m = Math.floor((diff%(1000*60*60))/(1000*60));
+  const s = Math.floor((diff%(1000*60))/1000);
+  document.getElementById("contador").innerText =
+    `⏳ ${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
 </script>
 
 </body>
